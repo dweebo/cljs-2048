@@ -1,0 +1,10 @@
+/target
+/bin
+/repl
+/checkouts
+/dev-resources
+.settings/
+.project
+.classpath
+.lein*
+/resources/public/js/2048.js

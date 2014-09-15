@@ -1,0 +1,99 @@
+body {
+    margin: 1em;
+}
+
+#board2048 {
+    border: 1px solid black;
+    clear:both;
+    margin: auto;
+    display: table;
+    border-spacing: 5px;
+    border-radius: 5px;
+    background-color: #A4A4A4;
+}
+
+.row2048 {
+    clear:both;
+    display: table-row;
+}
+
+
+.block2048 {
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+    text-align:center;
+    display: table-cell;
+    vertical-align: middle;
+    font-family: "Arial";
+    font-size: 4em;
+    border-radius: 5px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+.c0 { background-color: #D8D8D8 }
+.c2 { background-color: #F7F8E0 }
+.c4 { background-color: #CEF6CE }
+.c8 { background-color: #A9E2F3 }
+.c16 { background-color: #58ACFA }
+.c32 { background-color: #81F781 }
+.c64 { background-color: #F5DA81 }
+.c128 { background-color: #F7BE81 }
+.c256 { background-color: #FAAC58 }
+.c512 { background-color: #F5A9A9 }
+.c1024 { background-color: #FA5858 }
+.c2048 { background-color: #DF0101 text-color: white;}
+
+#control-panel {
+    width: 400px;
+    clear:both;
+    margin: auto;
+    margin-top: 8px;
+    padding: 0px 5px;
+}
+#score-panel {
+    font-size: 20pt;
+    float: left;
+    margin-top: 4px;
+}
+#winners-button {
+    float: right;
+    margin-right: 10px;
+}
+#new-game-button {
+    float: right;
+    margin-right: 10px;
+}
+#about-button {
+    float: right;
+}
+
+.modal-dialog {
+    width: 400px;
+}
+.game-over-inputs {
+    margin-left: 10px;
+}
+.game-over-inputs label {
+    float:left;
+    width: 100px;
+}
+.game-over-inputs input {
+    float:left;
+}
+#game-over-error {
+    color: red;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#winner-table {
+    width: 100%;
+}
+
+.clear {
+    clear: both;
+}
