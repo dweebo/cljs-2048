@@ -35,8 +35,8 @@ $ lein cljsbuild once
 To do active development I run a local server and have changes compiled immediately by running this in two separate consoles
 
 ```
-    $ lein ring server
-    $ lein cljsbuild auto
+$ lein ring server
+$ lein cljsbuild auto
 ```
 You can then visit http://localhost:3000/2048.html for testing.  
 
@@ -46,11 +46,11 @@ complete and force a refresh in your browser to get the changes.
 ### To connect a clojurescript REPL for the project
 From a console run
 ```
-    $ lein trampoline cljsbuild repl-listen
+$ lein trampoline cljsbuild repl-listen
 ```
 From http://localhost:3000/2048.html javascript console run
 ```
-    > com.hewittsoft.twenty48.connect_repl.brepl();
+> com.hewittsoft.twenty48.connect_repl.brepl();
 ```
 
 After that you can enter clojurescript in the first console and see changes in your browser.
@@ -61,7 +61,7 @@ Tests are running using [PhantomJS](http://phantomjs.org/) so you'll need to ins
 
 Then run
 ```
-    $ lein cljsbuild test
+$ lein cljsbuild test
 ```
 
 ## TODO
