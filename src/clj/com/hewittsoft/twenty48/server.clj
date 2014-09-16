@@ -10,10 +10,9 @@
       (response/redirect "/2048.html")
   (response/redirect (:uri request))))
 
-(def app 
+(def app
   (-> handler
     (resources/wrap-resource "public")))
 
 (defn -main [& args]
   (jetty/run-jetty app {:port 3000}))
-
