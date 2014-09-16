@@ -1,32 +1,34 @@
+; handle the browser view of the 2048 board
+; since there aren't many events to keep track of is also the "controller" of the app
 (ns com.hewittsoft.twenty48.view
-  (:require [com.hewittsoft.twenty48.core :as core]
-            [com.hewittsoft.twenty48.tincan :as tincan]
-            [jayq.core :as jayq]
-            [cljs-uuid.core :as uuid]
-            [cljs-time.core :as time]
-            [cljs-time.format :as time-format]))
+ (:require [com.hewittsoft.twenty48.core :as core]
+           [com.hewittsoft.twenty48.tincan :as tincan]
+           [jayq.core :as jayq]
+           [cljs-uuid.core :as uuid]
+           [cljs-time.core :as time]
+           [cljs-time.format :as time-format]))
 
 (def not-nil? (complement nil?))
 
-; get a dom element by id
 (defn by-id [id]
+  "get a dom element by id"
   (.getElementById js/document id))
 
-; set the html of a dom element
 (defn set-html! [dom content]
+  "set the html of a dom element"
   (set! (. dom -innerHTML) content))
 
-; set the classes of a dom element
 (defn set-class! [dom cls]
+  "set the classes of a dom element"
   (set! (. dom -className) cls))
 
-; update a blocks color on the board
-(defn update-color [div val]
+(defn update-color! [div val]
+  "update a blocks color on the board"
   (let [cls (str "block2048 c" val)]
     (set-class! div cls)))
 
-; after a move, update the board and score with changes
 (defn update-board [board score]
+  "after a move, update the board and score with changes"
   (do
     (doall (set-html! (by-id "score") (str score)))
     (doall (for [ x (range 0 4) y (range 0 4) ]
@@ -34,11 +36,11 @@
             html (if (= 0 val) "" val)
             div (by-id (str y x))]
         (do
-          (update-color div val)
+          (update-color! div val)
           (set-html! div html)))))))
 
-; save high score to server (using tincan api to LRS)
 (defn submit-high-score []
+  "save a high score and win to server (using tincan api to LRS)"
   (let [name (. (by-id "name") -value)
         email (. (by-id "email") -value)
         game-id (.-uuid  (uuid/make-random))]
@@ -51,17 +53,17 @@
           (tincan/submit-win game-id name email))
         (tincan/submit-high-score game-id name email @core/score)))))
 
-; handle a loss
 (defn lost []
-  (do
-    (.modal (jayq/$ :#game-over-modal) "show")))
+  "handle a loss"
+  (.modal (jayq/$ :#game-over-modal) "show"))
 
-; handle a win
 (defn won[]
+  "handle a win"
   (.modal (jayq/$ :#won-modal) "show"))
 
-; if playing with a keyboard the arrow keys can make moves
+
 (defn handle-keys [e]
+  "if playing with a keyboard the arrow keys can make moves"
   (let [key (.-keyCode e)
         move-func (case key
                      37 core/left-compact-rows
@@ -69,7 +71,8 @@
                      39 core/right-compact-rows
                      40 core/down-compact-rows
                      nil)]
-    (if (not-nil? move-func) (core/make-move move-func lost won update-board))))
+    (if (not-nil? move-func)
+      (core/make-move move-func lost won update-board))))
 
 ; if playing with a touchscreen finger swipes can make moves
 (defn swipe-left [] (core/make-move core/left-compact-rows lost won update-board))
@@ -77,19 +80,21 @@
 (defn swipe-up [] (core/make-move core/up-compact-rows lost won update-board))
 (defn swipe-down [] (core/make-move core/down-compact-rows lost won update-board))
 
-; resize the board to fill as much of the viewport as possible
 (defn resize-board []
+  "resize the board to fill as much of the viewport as possible"
   (let [
         screen-width  (.getWidth js/window.viewportSize)
-        screen-height (- (.getHeight js/window.viewportSize) (.height (jayq/$ :#control-panel)) 50)
-
-        ;screen-height (- (.height (jayq/$ :body)) (.height (jayq/$ :#control-panel)))
+        screen-height (- (.getHeight js/window.viewportSize)
+                         (.height (jayq/$ :#control-panel))
+                         (.height (jayq/$ :#score-panel))
+                         50)
         limiting-dimension (if (> screen-width screen-height) screen-height screen-width)
-        block-size (/ (- limiting-dimension 40) 4)]
+        block-size (/ (- limiting-dimension 40) 4)]  ;TODO this is hacky, could be improved on mobile
     (do
       (println screen-width " by " screen-height " " limiting-dimension " " block-size)
       (.width (jayq/$ :.block2048) block-size)
       (.height (jayq/$ :.block2048) block-size)
+      (.width (jayq/$ :#score-panel) (.width (jayq/$ :#board2048)))
       (.width (jayq/$ :#control-panel) (.width (jayq/$ :#board2048))))))
 
 
@@ -103,27 +108,32 @@
   (str "<tr><td>" (:name winner) "</td><td>" (format-date (:date winner)) " EDT</td></tr>"))
 
 (defn get-winners []
-  (letfn [(get-winners-callback [winners]
-    (let [table (jayq/$ :#winner-table)]
-      (do
-        (jayq/empty table)
-        (jayq/append table "<tr><th>Name</th><th>Date</th></tr>")
-        (doall (map #(jayq/append table (get-winner-table-row %)) winners))
-        (.modal (jayq/$ :#winners-modal) "show"))))]
+  "get recent winners and display to user"
+  (letfn [(get-winners-callback [err winners]
+    (if (not-nil? err)
+      (println "Error: " err) ; TODO show error to user
+      (let [table (jayq/$ :#winner-table)]
+        (do
+          (jayq/empty table)
+          (jayq/append table "<tr><th>Name</th><th>Date</th></tr>")
+          (doall (map #(jayq/append table (get-winner-table-row %)) winners))
+          (.modal (jayq/$ :#winners-modal) "show")))))]
       (tincan/get-winners get-winners-callback)))
 
 (defn show-about []
+  "show info about app"
   (.modal (jayq/$ :#about-modal) "show"))
 
-; start a new game
-(defn ^:export new-game []
+(defn new-game []
+  "start a new game"
   (do
     (println "new game")
     (core/new-game)
     (update-board @core/board 0)))
 
-; initialize view, game, event listeners
 (defn ^:export init []
+  "Entry point from browser.
+   Initialize view, game, event listeners."
   (do
       (enable-console-print!)
       (println "start init")
