@@ -1,147 +1,158 @@
 <html>
-  <head>
-    <title>2048</title>
+<head>
+  <title>2048</title>
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style type="text/css">@-webkit-viewport{width:device-width;}@-moz-viewport{width:device-width;}@-ms-viewport{width:device-width;}@-o-viewport{width:device-width;}@viewport{width:device-width;}</style>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
-    <link rel="stylesheet" href="css/2048.css" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
+  <link rel="stylesheet" href="css/2048.css" />
 
-    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/Tocca.min.js"></script>
-    <script type="text/javascript" src="js/tincan.js"></script>
-    <script type="text/javascript" src="js/viewportSize-min.js"></script>
-    <script type="text/javascript" src="js/2048.js"></script>
+  <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/Tocca.min.js"></script>
+  <script type="text/javascript" src="js/tincan.js"></script>
+  <script type="text/javascript" src="js/viewportSize-min.js"></script>
+  <script type="text/javascript" src="js/2048.js"></script>
 
-    <script type="text/javascript">
-      function init() {
-        com.hewittsoft.twenty48.view.init();
-      }
-    </script>
-  </head>
-  <body onload="init();">
+  <script type="text/javascript">
+    function init() {
+      com.hewittsoft.twenty48.view.init();
+    }
+  </script>
+</head>
+<body onload="init();">
 
-    <div class="modal fade" id="game-over-modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">Game Over</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Nice Game!  Would you like to post your score to the leaderboard?</p>
-                    <div class="game-over-inputs">
-                      <label for="name">Name:</label>
-                      <input type="text" id="name">
-                    </div>
-                    <div class="game-over-inputs clear">
-                      <label for="email">Email: </label>
-                      <input type="text" id="email">
-                    </div>
-                    <br class="clear"/>
-                    <div id="game-over-error"></div>
-                    <br class="clear"/>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">No thanks</button>
-                    <button type="button" class="btn btn-primary" id="submit-high-score-button">Submit High Score</button>
-                </div>
-            </div>
+  <div class="modal fade" id="game-over-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">Game Over</h4>
         </div>
+        <div class="modal-body">
+          <p>Nice Game! Would you like to post your score to the leaderboard?</p>
+          <div class="game-over-inputs">
+            <label for="name">Name:</label> <input type="text" id="name">
+          </div>
+          <div class="game-over-inputs clear">
+            <label for="email">Email: </label> <input type="text" id="email">
+          </div>
+          <br class="clear" />
+          <div id="game-over-error"></div>
+          <br class="clear" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">No
+            thanks</button>
+          <button type="button" class="btn btn-primary"
+            id="submit-high-score-button">Submit High Score</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="modal fade" id="won-modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">You Won</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Congratulations, you won!</p>
-                    <p>Keep playing for a high-score.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
+  <div class="modal fade" id="won-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">You Won</h4>
         </div>
+        <div class="modal-body">
+          <p>Congratulations, you won!</p>
+          <p>Keep playing for a high-score.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-
-    <div class="modal fade" id="winners-modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">Winners</h4>
-                </div>
-                <div class="modal-body">
-                    <table id="winner-table">
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
+  <div class="modal fade" id="winners-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">Winners</h4>
         </div>
+        <div class="modal-body">
+          <table id="winner-table">
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
+  </div>
 
+  <div class="modal fade" id="about-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">About</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            Credit for the game 2048 goes to <a href="http://gabrielecirulli.com/works/2048">Gabriele Cirulli</a>.
+          </p>
+          <p>
+            <a href="?">My implementation in clojurescript</a>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="modal fade" id="about-modal" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">About</h4>
-                </div>
-                <div class="modal-body">
-                  <p>Credit for the game 2048 goes to <a href="http://gabrielecirulli.com/works/2048">Gabriele Cirulli</a>.</p>
-                  <p><a href="?">My implementation in clojurescript</a>.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
+  <div id="score-panel">
+    Score: <span id="score"></span>
+    <button id="new-game-button" type="button" class="btn btn-primary">New Game</button>
+  </div>
+  <div id="board2048">
+    <div class="row2048">
+      <div id="00" class="block2048" unselectable="on"></div>
+      <div id="01" class="block2048" unselectable="on"></div>
+      <div id="02" class="block2048" unselectable="on"></div>
+      <div id="03" class="block2048" unselectable="on"></div>
     </div>
-
-    <div id="board2048">
-        <div class="row2048">
-        <div id="00" class="block2048" unselectable="on"></div>
-        <div id="01" class="block2048" unselectable="on"></div>
-        <div id="02" class="block2048" unselectable="on"></div>
-        <div id="03" class="block2048" unselectable="on"></div>
-        </div>
-        <div class="row2048">
-        <div id="10" class="block2048" unselectable="on"></div>
-        <div id="11" class="block2048" unselectable="on"></div>
-        <div id="12" class="block2048" unselectable="on"></div>
-        <div id="13" class="block2048" unselectable="on"></div>
-        </div>
-        <div class="row2048">
-          <div id="20" class="block2048" unselectable="on"></div>
-          <div id="21" class="block2048" unselectable="on"></div>
-          <div id="22" class="block2048" unselectable="on"></div>
-          <div id="23" class="block2048" unselectable="on"></div>
-        </div>
-        <div class="row2048">
-          <div id="30" class="block2048" unselectable="on"></div>
-          <div id="31" class="block2048" unselectable="on"></div>
-          <div id="32" class="block2048" unselectable="on"></div>
-          <div id="33" class="block2048" unselectable="on"></div>
-        </div>
+    <div class="row2048">
+      <div id="10" class="block2048" unselectable="on"></div>
+      <div id="11" class="block2048" unselectable="on"></div>
+      <div id="12" class="block2048" unselectable="on"></div>
+      <div id="13" class="block2048" unselectable="on"></div>
     </div>
-    <div id="control-panel">
-      <div id="score-panel">Score: <span id="score"></span></div>
-      <button id="about-button" type="button" class="btn btn-lg btn-primary">About</button>
-      <button id="winners-button" type="button" class="btn btn-lg btn-primary">Show Winners</button>
-      <button id="new-game-button" type="button" class="btn btn-lg btn-primary">New Game</button>
-      <br class="clear">
+    <div class="row2048">
+      <div id="20" class="block2048" unselectable="on"></div>
+      <div id="21" class="block2048" unselectable="on"></div>
+      <div id="22" class="block2048" unselectable="on"></div>
+      <div id="23" class="block2048" unselectable="on"></div>
     </div>
-  </body>
+    <div class="row2048">
+      <div id="30" class="block2048" unselectable="on"></div>
+      <div id="31" class="block2048" unselectable="on"></div>
+      <div id="32" class="block2048" unselectable="on"></div>
+      <div id="33" class="block2048" unselectable="on"></div>
+    </div>
+  </div>
+  <div id="control-panel">
+    <button id="about-button" type="button" class="btn btn-primary">About</button>
+    <button id="winners-button" type="button" class="btn btn-primary">Show Winners</button>
+    <br class="clear">
+  </div>
+</body>
 </html>
