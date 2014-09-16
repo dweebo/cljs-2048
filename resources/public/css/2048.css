@@ -1,3 +1,19 @@
+@-webkit-viewport {
+    width: device-width;
+}
+@-moz-viewport {
+    width: device-width;
+}
+@-ms-viewport {
+    width: device-width;
+}
+@-o-viewport {
+    width: device-width;
+}
+@viewport {
+    width: device-width;
+}
+
 body {
     margin: 1em;
 }
@@ -55,8 +71,8 @@ body {
     padding: 0px 5px;
 }
 #score-panel {
+    margin: auto;
     font-size: 20pt;
-    float: left;
     margin-top: 4px;
 }
 #winners-button {
@@ -65,7 +81,6 @@ body {
 }
 #new-game-button {
     float: right;
-    margin-right: 10px;
 }
 #about-button {
     float: right;
