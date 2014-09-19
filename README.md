@@ -11,9 +11,9 @@ implementation is original.
 
 I created this project in order to learn clojurescript and the Tincan API.
 When a player completes a game they can store their score to a remote learning record store (LRS) using the Tincan API.
-This project wraps a small part of the [Tincan JS API](https://github.com/RusticiSoftware/TinCanJS) in clojurescript to store
-statements when a game is completed with a score, and when a player wins the game.  It also queries the LRS to retrieve a list
-of recent winners.
+This project includes a partial implementation of the [Tincan API](http://tincanapi.com) in clojurescript to store
+statements when a game is completed with a score, and when a player wins the game.
+It also queries a LRS using the Tincan API to retrieve a list of recent winners.
 
 To connect to your own LRS you'll need to edit tincan_config.cljs and fill in these details
 ``` clj
@@ -38,7 +38,7 @@ To do active development I run a local server and have changes compiled immediat
 $ lein ring server
 $ lein cljsbuild auto
 ```
-You can then visit http://localhost:3000/2048.html for testing.  
+You can then visit http://localhost:3000/2048.html for testing.
 
 When you make a change to a file just wait for compilation to
 complete and force a refresh in your browser to get the changes.
@@ -66,6 +66,7 @@ $ lein cljsbuild test
 
 ## TODO
 - More mobile testing
+- Local storage for storing own high score and keeping track of game
 - Use advanced clojurescript compilation
 - Add more key mappings
 - Add sliding animations

@@ -1,5 +1,6 @@
 /target
 /bin
+/out
 /repl
 /checkouts
 /dev-resources
@@ -8,3 +9,4 @@
 .classpath
 .lein*
 /resources/public/js/2048.js
+/resources/public/js/2048-min.js
