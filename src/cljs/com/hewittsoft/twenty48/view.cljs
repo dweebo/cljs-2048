@@ -3,63 +3,58 @@
 (ns com.hewittsoft.twenty48.view
  (:require [com.hewittsoft.twenty48.core :as core]
            [com.hewittsoft.twenty48.tincan :as tincan]
-           [jayq.core :as jayq]
            [cljs-uuid.core :as uuid]
            [cljs-time.core :as time]
-           [cljs-time.format :as time-format]))
+           [cljs-time.format :as time-format]
+           [dommy.utils :as utils]
+           [dommy.core :as dommy])
+ (:use-macros
+   [dommy.macros :only [node sel sel1 deftemplate]]))
 
 (def not-nil? (complement nil?))
-
-(defn by-id [id]
-  "get a dom element by id"
-  (.getElementById js/document id))
-
-(defn set-html! [dom content]
-  "set the html of a dom element"
-  (set! (. dom -innerHTML) content))
 
 (defn set-class! [dom cls]
   "set the classes of a dom element"
   (set! (. dom -className) cls))
 
 (defn update-color! [div val]
-  "update a blocks color on the board"
+  "update the color of a blocks on the board"
   (let [cls (str "block2048 c" val)]
     (set-class! div cls)))
 
 (defn update-board [board score]
   "after a move, update the board and score with changes"
   (do
-    (doall (set-html! (by-id "score") (str score)))
+    (dommy/set-html! (sel1 :#score) (str score))
     (doall (for [ x (range 0 4) y (range 0 4) ]
       (let [val (core/board-val board x y)
             html (if (= 0 val) "" val)
-            div (by-id (str y x))]
+            div (sel1 (str "#b" y x))]
         (do
           (update-color! div val)
-          (set-html! div html)))))))
+          (dommy/set-html! div html)))))))
 
 (defn submit-high-score []
   "save a high score and win to server (using tincan api to LRS)"
-  (let [name (. (by-id "name") -value)
-        email (. (by-id "email") -value)
+  (let [name (dommy/value (sel1 :#name))
+        email (dommy/value (sel1 :#email))
         game-id (.-uuid  (uuid/make-random))]
     (if (or (= name "") (= email ""))
-      (set-html! (by-id "game-over-error") "Please enter your name and email")
+      (dommy/set-html! (sel1 :#game-over-error) "Please enter your name and email")
       (do
         (println "submit " name email)
-        (.modal (jayq/$ :#game-over-modal) "hide")
+        (hide-modal (sel1 :#game-over-modal))
         (if (core/win? @core/board)
           (tincan/submit-win game-id name email))
         (tincan/submit-high-score game-id name email @core/score)))))
 
 (defn lost []
   "handle a loss"
-  (.modal (jayq/$ :#game-over-modal) "show"))
+  (show-modal (sel1 :#game-over-modal)))
 
 (defn won[]
   "handle a win"
-  (.modal (jayq/$ :#won-modal) "show"))
+  (show-modal (sel1 :#won-modal)))
 
 
 (defn handle-keys [e]
@@ -85,18 +80,17 @@
   (let [
         screen-width  (.getWidth js/window.viewportSize)
         screen-height (- (.getHeight js/window.viewportSize)
-                         (.height (jayq/$ :#control-panel))
-                         (.height (jayq/$ :#score-panel))
+                         (dommy/px (sel1 :#control-panel) :height)
+                         (dommy/px (sel1 :#score-panel) :height)
                          50)
         limiting-dimension (if (> screen-width screen-height) screen-height screen-width)
         block-size (/ (- limiting-dimension 40) 4)]  ;TODO this is hacky, could be improved on mobile
-    (do
-      (println screen-width " by " screen-height " " limiting-dimension " " block-size)
-      (.width (jayq/$ :.block2048) block-size)
-      (.height (jayq/$ :.block2048) block-size)
-      (.width (jayq/$ :#score-panel) (.width (jayq/$ :#board2048)))
-      (.width (jayq/$ :#control-panel) (.width (jayq/$ :#board2048))))))
 
+      (println screen-width " by " screen-height " " limiting-dimension " " block-size)
+      (doall (->> (sel :.block2048)
+                  (map #(dommy/set-px! % :width block-size :height block-size))))
+      (dommy/set-px! (sel1 :#score-panel) :width (dommy/px (sel1 :#board2048) :width))
+      (dommy/set-px! (sel1 :#control-panel) :width (dommy/px (sel1 :#board2048) :width))))
 
 (defn format-date [date]
   (let [dt (time-format/parse (time-format/formatters :date-time) date)
@@ -104,30 +98,47 @@
         ;dt-tz (time/to-time-zone dt (time/time-zone-for-offset -4))] API says to do this but it isn't implemented
     (time-format/unparse (time-format/formatter "MM/dd/yyyy HH:mm") dt-tz)))
 
-(defn get-winner-table-row [winner]
-  (str "<tr><td>" (:name winner) "</td><td>" (format-date (:date winner)) " EDT</td></tr>"))
+(deftemplate winner-table-row [winner]
+  [:tr [:td (:name winner)][:td (str (format-date (:date winner)) " EDT")]])
 
 (defn get-winners []
   "get recent winners and display to user"
   (letfn [(get-winners-callback [err winners]
     (if (not-nil? err)
       (println "Error: " err) ; TODO show error to user
-      (let [table (jayq/$ :#winner-table)]
+      (let [table (sel1 :#winner-table)]
         (do
-          (jayq/empty table)
-          (jayq/append table "<tr><th>Name</th><th>Date</th></tr>")
-          (doall (map #(jayq/append table (get-winner-table-row %)) winners))
-          (.modal (jayq/$ :#winners-modal) "show")))))]
+          (dommy/clear! table)
+          (dommy/append! table (node [:tr [:th "Name"][:th "Date"]]))
+          (doall (map #(dommy/append! table (winner-table-row %)) winners))
+          (show-modal (sel1 :#winners-modal))))))]
       (tincan/get-winners get-winners-callback)))
 
 (defn show-about []
   "show info about app"
-  (.modal (jayq/$ :#about-modal) "show"))
+  (show-modal (sel1 :#about-modal)))
+
+(defn show-modal [modal]
+  (dommy/set-style! modal :display "block")
+  (let [board-pos (dommy/bounding-client-rect (sel1 :#board2048))
+        dialog-pos (dommy/bounding-client-rect modal)
+        board-height (- (:bottom board-pos) (:top board-pos))
+        dialog-height (- (:bottom dialog-pos) (:top dialog-pos))
+        top-offset (/ (- board-height dialog-height) 2)
+        dialog-top (+ top-offset (:top board-pos))
+        dialog-width (- (:right board-pos) (:left board-pos) 40)]
+    (dommy/set-style! modal :top dialog-top :width dialog-width)))
+
+(defn hide-modal [modal]
+  (dommy/set-style! modal :display "none"))
+
+(defn hide-all-modals []
+  (doall (->> (sel :.modal-dialog)
+              (map #(dommy/set-style! % :display "none")))))
 
 (defn new-game []
   "start a new game"
   (do
-    (println "new game")
     (core/new-game)
     (update-board @core/board 0)))
 
@@ -135,17 +146,16 @@
   "Entry point from browser.
    Initialize view, game, event listeners."
   (do
-      (enable-console-print!)
-      (println "start init")
       (resize-board)
-      (.on (jayq/$ :#new-game-button) "click" new-game)
-      (.on (jayq/$ :#winners-button) "click" get-winners)
-      (.on (jayq/$ :#about-button) "click" show-about)
-      (.on (jayq/$ :#submit-high-score-button) "click" submit-high-score)
-      (.on (jayq/$ js/window) "keydown" handle-keys)
-      (.on (jayq/$ js/window) "swipeleft" swipe-left)
-      (.on (jayq/$ js/window) "swiperight" swipe-right)
-      (.on (jayq/$ js/window) "swipedown" swipe-down)
-      (.on (jayq/$ js/window) "swipeup" swipe-up)
-      (new-game)
-      (println "end init")))
+      (doall (->> (sel :.modal-close)
+                  (map #(dommy/listen! % :click hide-all-modals))))
+      (dommy/listen! (sel1 :#new-game-button) :click new-game)
+      (dommy/listen! (sel1 :#winners-button) :click get-winners)
+      (dommy/listen! (sel1 :#about-button) :click show-about)
+      (dommy/listen! (sel1 :#submit-high-score-button) :click submit-high-score)
+      (dommy/listen! (sel1 :body) :keydown handle-keys)
+      (dommy/listen! (sel1 :body) "swipeleft" swipe-left)
+      (dommy/listen! (sel1 :body) "swiperight" swipe-right)
+      (dommy/listen! (sel1 :body) "swipedown" swipe-down)
+      (dommy/listen! (sel1 :body) "swipeup" swipe-up)
+      (new-game)))

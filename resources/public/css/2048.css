@@ -88,7 +88,14 @@ body {
 
 .modal-dialog {
     width: 400px;
+    display: none;
+    margin: auto;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
 }
+
 .game-over-inputs {
     margin-left: 10px;
 }

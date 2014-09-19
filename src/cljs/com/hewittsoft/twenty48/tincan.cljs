@@ -1,5 +1,5 @@
 ; small clojurescript implementation of parts of the TinCan API
-(ns com.hewittsoft.twenty48.tincan2
+(ns com.hewittsoft.twenty48.tincan
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [com.hewittsoft.twenty48.tincan-config :as config]
             [cljs-http.client :as http]
