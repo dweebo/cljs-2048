@@ -8,10 +8,10 @@
            [cljs-time.format :as time-format]
            [dommy.utils :as utils]
            [dommy.core :as dommy]
+           [alandipert.storage-atom :refer [local-storage]]
            [viewportSize] [tocca])
  (:use-macros
    [dommy.macros :only [node sel sel1 deftemplate]]))
-
 
 (def not-nil? (complement nil?))
 
@@ -29,10 +29,12 @@
   (let [board-pos (dommy/bounding-client-rect (sel1 :#board2048))
         dialog-pos (dommy/bounding-client-rect modal)
         board-height (- (:bottom board-pos) (:top board-pos))
+        board-width (- (:right board-pos) (:left board-pos))
         dialog-height (- (:bottom dialog-pos) (:top dialog-pos))
         top-offset (/ (- board-height dialog-height) 2)
         dialog-top (+ top-offset (:top board-pos))
-        dialog-width (- (:right board-pos) (:left board-pos) 40)]
+        margin (* .05 board-width)
+        dialog-width (- board-width margin)]
     (dommy/set-style! modal :top dialog-top :width dialog-width)))
 
 (defn hide-modal [modal]
@@ -42,10 +44,23 @@
   (doall (->> (sel :.modal-dialog)
               (map #(dommy/set-style! % :display "none")))))
 
-(defn update-board [board score]
+; track if the game has been won
+(def has-won (local-storage (atom false) :has-won))
+; track if the game is being played still
+(def playing (local-storage (atom false) :playing))
+
+; the board values
+(def board (local-storage (atom []) :board))
+; score
+(def score (local-storage (atom 0) :score))
+
+(def high-score (local-storage (atom 0) :high-score))
+
+(defn update-board [board score high-score]
   "after a move, update the board and score with changes"
   (do
     (dommy/set-html! (sel1 :#score) (str score))
+    (dommy/set-html! (sel1 :#high-score) (str high-score))
     (doall (for [ x (range 0 4) y (range 0 4) ]
       (let [val (core/board-val board x y)
             html (if (= 0 val) "" val)
@@ -76,6 +91,29 @@
   "handle a win"
   (show-modal (sel1 :#won-modal)))
 
+(defn make-move [move-func]
+  "make a move
+   move-func should be left-compact-rows, right-compact-rows, etc.
+   lost-func is a callback if this move results in a loss
+   won-func is a callback if this move results in a win
+   view-func is a callback to update a view with the new board and score"
+  (if @playing
+    (if (core/lose? @board)
+      (do
+        (reset! playing false)
+        (lost))
+      (let [new-board (move-func @board)]
+        (if (not (= @board new-board))
+        (do
+          (swap! score + (core/score-move @board new-board))
+          (if (> @score @high-score)
+            (reset! high-score @score))
+          (reset! board (core/add-num-to-board new-board))
+          (update-board @board @score @high-score)
+          (if (and (= @has-won false) (core/win? @board))
+            (do
+              (reset! has-won true)
+              (won)))))))))
 
 (defn handle-keys [e]
   "if playing with a keyboard the arrow keys can make moves"
@@ -87,13 +125,13 @@
                      40 core/down-compact-rows
                      nil)]
     (if (not-nil? move-func)
-      (core/make-move move-func lost won update-board))))
+      (make-move move-func))))
 
 ; if playing with a touchscreen finger swipes can make moves
-(defn swipe-left [] (core/make-move core/left-compact-rows lost won update-board))
-(defn swipe-right [] (core/make-move core/right-compact-rows lost won update-board))
-(defn swipe-up [] (core/make-move core/up-compact-rows lost won update-board))
-(defn swipe-down [] (core/make-move core/down-compact-rows lost won update-board))
+(defn swipe-left [] (make-move core/left-compact-rows))
+(defn swipe-right [] (make-move core/right-compact-rows))
+(defn swipe-up [] (make-move core/up-compact-rows))
+(defn swipe-down [] (make-move core/down-compact-rows))
 
 (defn resize-board []
   "resize the board to fill as much of the viewport as possible"
@@ -119,7 +157,7 @@
     (time-format/unparse (time-format/formatter "MM/dd/yyyy HH:mm") dt-tz)))
 
 (deftemplate winner-table-row [winner]
-  [:tr [:td (:name winner)][:td (str (format-date (:date winner)) " EDT")]])
+  [:tr [:td (:name winner)][:td (format-date (:date winner))]])
 
 (defn get-winners []
   "get recent winners and display to user"
@@ -141,8 +179,11 @@
 (defn new-game []
   "start a new game"
   (do
-    (core/new-game)
-    (update-board @core/board 0)))
+    (swap! board core/init-board)
+    (reset! score 0)
+    (reset! playing true)
+    (reset! has-won false))
+    (update-board @board 0 @high-score))
 
 (defn ^:export init []
   "Entry point from browser.
@@ -160,4 +201,6 @@
       (dommy/listen! (sel1 :body) "swiperight" swipe-right)
       (dommy/listen! (sel1 :body) "swipedown" swipe-down)
       (dommy/listen! (sel1 :body) "swipeup" swipe-up)
-      (new-game)))
+      (if (= 0 (count @board))
+        (new-game)
+        (update-board @board @score @high-score))))

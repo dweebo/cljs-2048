@@ -15,7 +15,8 @@
 }
 
 body {
-    margin: 1em;
+    margin: 0;
+    margin-top: 0.5em;
 }
 
 #board2048 {
@@ -23,8 +24,8 @@ body {
     clear:both;
     margin: auto;
     display: table;
-    border-spacing: 5px;
-    border-radius: 5px;
+    border-spacing: 0.3em;
+    border-radius: 0.3em;
     background-color: #A4A4A4;
 }
 
@@ -42,8 +43,8 @@ body {
     display: table-cell;
     vertical-align: middle;
     font-family: "Arial";
-    font-size: 4em;
-    border-radius: 5px;
+    font-size: x-large;
+    border-radius: 0.3em;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select:none;
@@ -64,30 +65,29 @@ body {
 .c2048 { background-color: #DF0101 text-color: white;}
 
 #control-panel {
-    width: 400px;
     clear:both;
     margin: auto;
-    margin-top: 8px;
+    margin-top: 0.5em;
     padding: 0px 5px;
 }
 #score-panel {
     margin: auto;
-    font-size: 20pt;
-    margin-top: 4px;
+    font-size: large;
+    margin-top: 0.5em;
 }
 #winners-button {
     float: right;
-    margin-right: 10px;
+    margin-right: 0.5em;
 }
 #new-game-button {
     float: right;
+    margin-bottom: 0.5em;
 }
 #about-button {
     float: right;
 }
 
 .modal-dialog {
-    width: 400px;
     display: none;
     margin: auto;
     position: absolute;

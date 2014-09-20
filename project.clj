@@ -10,7 +10,8 @@
                  [cljs-uuid "0.0.4"]
                  [cljs-http "0.1.16"]
                  [com.andrewmcveigh/cljs-time "0.1.6"]
-                 [prismatic/dommy "0.1.3"]]
+                 [prismatic/dommy "0.1.3"]
+                 [alandipert/storage-atom "1.2.3"]]
   :plugins [[lein-cljsbuild "1.0.3"]
             [lein-ring "0.8.10"]
             [com.cemerick/clojurescript.test "0.3.1"]]
@@ -18,7 +19,7 @@
   :source-paths ["src/clj"]
   :cljsbuild {
     :builds {
-      :main {
+      :dev {
         :source-paths ["src/cljs"]
         :compiler {:output-to "resources/public/js/2048.js"
                    :optimizations :simple

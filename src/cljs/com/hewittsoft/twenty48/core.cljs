@@ -8,15 +8,7 @@
 ; this defines the probability of the new number being a 2
 (def two-probability 0.8)
 
-; track if the game has been won
-(def won (atom false))
-; track if the game is being played still
-(def playing (atom false))
 
-; the board values
-(def board (atom []))
-; score
-(def score (atom 0))
 
 (def not-zero? (complement zero?))
 
@@ -146,36 +138,4 @@
         nb (get-sorted-board new-board)]
       (score-seq ob nb 0)))
 
-
-(defn new-game []
-  "start a new game"
-  (do
-    (swap! board init-board)
-    (reset! score 0)
-    (reset! playing true)
-    (reset! won false))
-  nil)
-
-
-(defn make-move [move-func lost-func, won-func, view-func]
-  "make a move
-   move-func should be left-compact-rows, right-compact-rows, etc.
-   lost-func is a callback if this move results in a loss
-   won-func is a callback if this move results in a win
-   view-func is a callback to update a view with the new board and score"
-  (if @playing
-    (if (lose? @board)
-      (do
-        (reset! playing false)
-        (lost-func))
-      (let [new-board (move-func @board)]
-        (if (not (= @board new-board))
-        (do
-          (swap! score + (score-move @board new-board))
-          (reset! board (add-num-to-board new-board))
-          (view-func @board @score)
-          (if (and (= @won false) (win? @board))
-            (do
-              (reset! won true)
-              (won-func)))))))))
 
