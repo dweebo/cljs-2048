@@ -7,9 +7,11 @@
            [cljs-time.core :as time]
            [cljs-time.format :as time-format]
            [dommy.utils :as utils]
-           [dommy.core :as dommy])
+           [dommy.core :as dommy]
+           [viewportSize] [tocca])
  (:use-macros
    [dommy.macros :only [node sel sel1 deftemplate]]))
+
 
 (def not-nil? (complement nil?))
 
@@ -21,6 +23,24 @@
   "update the color of a blocks on the board"
   (let [cls (str "block2048 c" val)]
     (set-class! div cls)))
+
+(defn show-modal [modal]
+  (dommy/set-style! modal :display "block")
+  (let [board-pos (dommy/bounding-client-rect (sel1 :#board2048))
+        dialog-pos (dommy/bounding-client-rect modal)
+        board-height (- (:bottom board-pos) (:top board-pos))
+        dialog-height (- (:bottom dialog-pos) (:top dialog-pos))
+        top-offset (/ (- board-height dialog-height) 2)
+        dialog-top (+ top-offset (:top board-pos))
+        dialog-width (- (:right board-pos) (:left board-pos) 40)]
+    (dommy/set-style! modal :top dialog-top :width dialog-width)))
+
+(defn hide-modal [modal]
+  (dommy/set-style! modal :display "none"))
+
+(defn hide-all-modals []
+  (doall (->> (sel :.modal-dialog)
+              (map #(dommy/set-style! % :display "none")))))
 
 (defn update-board [board score]
   "after a move, update the board and score with changes"
@@ -117,24 +137,6 @@
 (defn show-about []
   "show info about app"
   (show-modal (sel1 :#about-modal)))
-
-(defn show-modal [modal]
-  (dommy/set-style! modal :display "block")
-  (let [board-pos (dommy/bounding-client-rect (sel1 :#board2048))
-        dialog-pos (dommy/bounding-client-rect modal)
-        board-height (- (:bottom board-pos) (:top board-pos))
-        dialog-height (- (:bottom dialog-pos) (:top dialog-pos))
-        top-offset (/ (- board-height dialog-height) 2)
-        dialog-top (+ top-offset (:top board-pos))
-        dialog-width (- (:right board-pos) (:left board-pos) 40)]
-    (dommy/set-style! modal :top dialog-top :width dialog-width)))
-
-(defn hide-modal [modal]
-  (dommy/set-style! modal :display "none"))
-
-(defn hide-all-modals []
-  (doall (->> (sel :.modal-dialog)
-              (map #(dommy/set-style! % :display "none")))))
 
 (defn new-game []
   "start a new game"

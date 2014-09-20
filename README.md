@@ -67,9 +67,6 @@ $ lein cljsbuild test
 ## TODO
 - More mobile testing
 - Local storage for storing own high score and keeping track of game
-- Use advanced clojurescript compilation
 - Add more key mappings
 - Add sliding animations
 - Tincan query for leaderboard
-- Use jayq for everything
-- Use a clojurescript frontend library for easier dom manipulation
