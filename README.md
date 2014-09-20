@@ -65,8 +65,6 @@ $ lein cljsbuild test
 ```
 
 ## TODO
-- More mobile testing
-- Local storage for storing own high score and keeping track of game
 - Add more key mappings
 - Add sliding animations
 - Tincan query for leaderboard
