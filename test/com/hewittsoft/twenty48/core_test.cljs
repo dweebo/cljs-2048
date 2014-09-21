@@ -140,28 +140,3 @@
                    [32 32 2 4]]
         new-board (core/left-compact-rows old-board)]
     (is (= (+ 4 8 16 32 64) (core/score-move old-board new-board)))))
-
-(defn setup-game [board score playing won]
-  (do
-    (reset! core/board board)
-    (reset! core/score score)
-    (reset! core/playing playing)
-    (reset! core/won won))
-  nil)
-
-(deftest make-move-no-win-loss
-  (let [won (atom false)
-        won-callback (fn[] (reset! won true))
-        lost (atom false)
-        lost-callback (fn[] (reset! lost true))
-        new-board (atom [])
-        new-score (atom 0)
-        update-view (fn[board score] (do (reset! new-board board) (reset! new-score score)))
-        a (setup-game [[2 0 0 0]
-                       [2 0 2 0]
-                       [8 2 4 2]
-                       [2 2 4 4]] 0 true false)
-        b (core/make-move core/down-compact-rows  lost-callback won-callback update-view)]
-    (is (= false @won))
-    (is (= false @lost))
-    (is (= 16 @new-score 16))))
