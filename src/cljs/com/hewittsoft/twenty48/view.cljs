@@ -79,9 +79,9 @@
       (do
         (println "submit " name email)
         (hide-modal (sel1 :#game-over-modal))
-        (if (core/win? @core/board)
+        (if (core/win? @board)
           (tincan/submit-win game-id name email))
-        (tincan/submit-high-score game-id name email @core/score)))))
+        (tincan/submit-high-score game-id name email @score)))))
 
 (defn lost []
   "handle a loss"
@@ -133,23 +133,6 @@
 (defn swipe-up [] (make-move core/up-compact-rows))
 (defn swipe-down [] (make-move core/down-compact-rows))
 
-(defn resize-board []
-  "resize the board to fill as much of the viewport as possible"
-  (let [
-        screen-width  (.getWidth js/window.viewportSize)
-        screen-height (- (.getHeight js/window.viewportSize)
-                         (dommy/px (sel1 :#control-panel) :height)
-                         (dommy/px (sel1 :#score-panel) :height)
-                         50)
-        limiting-dimension (if (> screen-width screen-height) screen-height screen-width)
-        block-size (/ (- limiting-dimension 40) 4)]  ;TODO this is hacky, could be improved on mobile
-
-      (println screen-width " by " screen-height " " limiting-dimension " " block-size)
-      (doall (->> (sel :.block2048)
-                  (map #(dommy/set-px! % :width block-size :height block-size))))
-      (dommy/set-px! (sel1 :#score-panel) :width (dommy/px (sel1 :#board2048) :width))
-      (dommy/set-px! (sel1 :#control-panel) :width (dommy/px (sel1 :#board2048) :width))))
-
 (defn format-date [date]
   (let [dt (time-format/parse (time-format/formatters :date-time) date)
         dt-tz (time/plus dt (time/hours -4))] ; TODO format to local timezone, cljs-time doesn't support that quite yet
@@ -185,6 +168,23 @@
     (reset! has-won false))
     (update-board @board 0 @high-score))
 
+(defn resize-board []
+  "resize the board to fill as much of the viewport as possible"
+  (let [
+        screen-width  (.getWidth js/window.viewportSize)
+        screen-height (- (.getHeight js/window.viewportSize)
+                         (dommy/px (sel1 :#control-panel) :height)
+                         (dommy/px (sel1 :#score-panel) :height)
+                         50)
+        limiting-dimension (if (> screen-width screen-height) screen-height screen-width)
+        block-size (/ (- limiting-dimension 40) 4)]
+
+      (println screen-width " by " screen-height " " limiting-dimension " " block-size)
+      (doall (->> (sel :.block2048)
+                  (map #(dommy/set-px! % :width block-size :height block-size))))
+      (dommy/set-px! (sel1 :#score-panel) :width (dommy/px (sel1 :#board2048) :width))
+      (dommy/set-px! (sel1 :#control-panel) :width (dommy/px (sel1 :#board2048) :width))))
+
 (defn ^:export init []
   "Entry point from browser.
    Initialize view, game, event listeners."
@@ -201,6 +201,7 @@
       (dommy/listen! (sel1 :body) "swiperight" swipe-right)
       (dommy/listen! (sel1 :body) "swipedown" swipe-down)
       (dommy/listen! (sel1 :body) "swipeup" swipe-up)
-      (if (= 0 (count @board))
+
+      (if (= 0 (count @board)) ; if this is the first visit start a game, otherwise last game is loaded from local storage
         (new-game)
         (update-board @board @score @high-score))))
