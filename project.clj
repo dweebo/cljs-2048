@@ -25,24 +25,23 @@
                    :optimizations :simple
                    :pretty-print true
                    :foreign-libs [{:file "resources/lib/viewportSize-min.js" :provides ["viewportSize"]}
-                                  {:file "resources/lib/Tocca.min.js" :provides ["tocca"]}]}}
+                                  {:file "resources/lib/Tocca.js" :provides ["tocca"]}]}}
       :advanced {
         :source-paths ["src/cljs"]
         :compiler {:output-to "resources/public/js/2048-min.js"
                    :optimizations :advanced
                    :pretty-print false
                    :foreign-libs [{:file "resources/lib/viewportSize-min.js" :provides ["viewportSize"]}
-                                  {:file "resources/lib/Tocca.min.js" :provides ["tocca"]}]}}
+                                  {:file "resources/lib/Tocca.js" :provides ["tocca"]}]}}
       :test {
         :source-paths ["src/cljs" "test"]
         :compiler {:output-to "target/unittests.js"
                    :optimizations :simple
                    :pretty-print true
                    :foreign-libs [{:file "resources/lib/viewportSize-min.js" :provides ["viewportSize"]}
-                                  {:file "resources/lib/Tocca.min.js" :provides ["tocca"]}]}}}
+                                  {:file "resources/lib/Tocca.js" :provides ["tocca"]}]}}}
     :test-commands {
-        "unit-tests" ["phantomjs" :runner
-                      "target/unittests.js" ]}}
+        "unit-tests" ["phantomjs" "test/runner.js" "target/unittests.js" ]}}
   :main com.hewittsoft.twenty48.server
   :ring {:handler com.hewittsoft.twenty48.server/app})
 

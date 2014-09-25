@@ -185,6 +185,9 @@
       (dommy/set-px! (sel1 :#score-panel) :width (dommy/px (sel1 :#board2048) :width))
       (dommy/set-px! (sel1 :#control-panel) :width (dommy/px (sel1 :#board2048) :width))))
 
+(defn prevent-ios-bounce [e]
+  (.preventDefault e))
+
 (defn ^:export init []
   "Entry point from browser.
    Initialize view, game, event listeners."
@@ -201,6 +204,7 @@
       (dommy/listen! (sel1 :body) "swiperight" swipe-right)
       (dommy/listen! (sel1 :body) "swipedown" swipe-down)
       (dommy/listen! (sel1 :body) "swipeup" swipe-up)
+      (dommy/listen! js/document "touchmove" prevent-ios-bounce)
 
       (if (= 0 (count @board)) ; if this is the first visit start a game, otherwise last game is loaded from local storage
         (new-game)

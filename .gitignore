@@ -8,5 +8,6 @@
 .project
 .classpath
 .lein*
+.nrepl-port
 /resources/public/js/2048.js
 /resources/public/js/2048-min.js
