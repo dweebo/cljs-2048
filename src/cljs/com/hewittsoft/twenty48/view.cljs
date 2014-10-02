@@ -159,6 +159,10 @@
   "show info about app"
   (show-modal (sel1 :#about-modal)))
 
+(defn show-help []
+  "show help info"
+  (show-modal (sel1 :#help-modal)))
+
 (defn new-game []
   "start a new game"
   (do
@@ -198,6 +202,7 @@
       (dommy/listen! (sel1 :#new-game-button) :click new-game)
       (dommy/listen! (sel1 :#winners-button) :click get-winners)
       (dommy/listen! (sel1 :#about-button) :click show-about)
+      (dommy/listen! (sel1 :#help-button) :click show-help)
       (dommy/listen! (sel1 :#submit-high-score-button) :click submit-high-score)
       (dommy/listen! (sel1 :body) :keydown handle-keys)
       (dommy/listen! (sel1 :body) "swipeleft" swipe-left)

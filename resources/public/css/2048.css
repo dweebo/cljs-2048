@@ -85,6 +85,10 @@ body {
 }
 #about-button {
     float: right;
+    margin-right: 0.5em;
+}
+#help-button {
+    float: right;
 }
 
 .modal-dialog {

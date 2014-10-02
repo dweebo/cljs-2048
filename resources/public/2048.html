@@ -100,6 +100,25 @@
     </div>
   </div>
 
+  <div class="modal-dialog" id="help-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close modal-close">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Help</h4>
+      </div>
+      <div class="modal-body">
+        <p>Use arrow keys on your keyboard or swipe on a touch screen to slide blocks left, right, up or down.</p>
+        <p>When two blocks with the same value are next to each other you can slide them together to combine them.</p>
+        <p>The object of the game is to get a block with 2048!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
   <div id="score-panel">
     Score: <span id="score"></span> High: <span id="high-score"></span>
     <button id="new-game-button" type="button" class="btn btn-primary">New Game</button>
@@ -131,6 +150,7 @@
     </div>
   </div>
   <div id="control-panel">
+    <button id="help-button" type="button" class="btn btn-primary">Help</button>
     <button id="about-button" type="button" class="btn btn-primary">About</button>
     <button id="winners-button" type="button" class="btn btn-primary">Show Winners</button>
     <br class="clear">
